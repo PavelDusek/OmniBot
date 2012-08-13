@@ -63,126 +63,77 @@ public class Main extends JFrame implements ActionListener {
 
     private boolean editTalkPages = false;
 
-    private JPanel leftPanel;
-    private JPanel rightPanel;
-    private JPanel topPanel;
     private JButton nactiSoubor;
-    private JLabel nactiSouborLabel;
     private JFileChooser fileChooser;
 
     private JComboBox apiURLCombo;
-    private JPanel loginPanel;
     private JTextField loginName;
-    private JLabel loginNameLabel;
-    private JPanel passwordPanel;
     private JPasswordField password;
-    private JLabel passwordLabel;
     private JButton login;
 
-    private JPanel importCriteriaPanel;
     private JButton importCriteriaButton;
     private JButton exportCriteriaButton;
     JCheckBox searchWhileParsing;
-    private JPanel searchLimitPanel;
-    private JLabel searchLimitLabel;
     JComboBox searchLimitCombo;
-    private JPanel searchOffsetPanel;
-    private JLabel searchOffsetLabel;
     JSpinner searchOffsetSpinner;
-    private JPanel stringTitleSearchPanel;
     JCheckBox stringTitleSearchCheckBox;
     JTextField stringTitleSearchTextField;
-    private JPanel stringTitleNegationPanel;
     JCheckBox stringTitleNegationCheckBox;
     JTextField stringTitleNegationTextField;
-    private JPanel stringSearchPanel;
     JCheckBox stringSearchCheckBox;
     JTextField stringSearchTextField;
-    private JPanel stringNegationPanel;
     JCheckBox stringNegationCheckBox;
     JTextField stringNegationTextField;
-    private JPanel regexTitleSearchPanel;
     JCheckBox regexTitleSearchCheckBox;
     JTextField regexTitleSearchTextField;
-    private JPanel regexTitleNegationPanel;
     JCheckBox regexTitleNegationCheckBox;
     JTextField regexTitleNegationTextField;
-    private JPanel regexSearchPanel;
     JCheckBox regexSearchCheckBox;
     JTextField regexSearchTextField;
-    private JPanel regexNegationPanel;
     JCheckBox regexNegationCheckBox;
     JTextField regexNegationTextField;
-    private JPanel replacePanel;
     JCheckBox replaceCheckBox;
-    JTextField replaceTextField;
-    private JPanel talkPageNamespacePanel;
+    JTextArea replaceTextField;
     JCheckBox talkPageNamespaceCheckBox;
     JTextField talkPageNamespaceTextField;
-    private JPanel talkPagePanel;
     JCheckBox talkPageCheckBox;
     JCheckBox talkPageMissingCheckBox;
-    private JPanel talkPageStringSearchPanel;
     JCheckBox talkPageStringSearchCheckBox;
     JTextField talkPageStringSearchTextField;
-    private JPanel talkPageStringNegationPanel;
     JCheckBox talkPageStringNegationCheckBox;
     JTextField talkPageStringNegationTextField;
-    private JPanel talkPageRegexSearchPanel;
     JCheckBox talkPageRegexSearchCheckBox;
     JTextField talkPageRegexSearchTextField;
-    private JPanel talkPageRegexNegationPanel;
     JCheckBox talkPageRegexNegationCheckBox;
     JTextField talkPageRegexNegationTextField;
-    private JPanel talkPageReplacePanel;
     JCheckBox talkPageReplaceCheckBox;
-    JTextField talkPageReplaceTextField;
-    private JPanel talkPageCreatePanel;
+    JTextArea talkPageReplaceTextField;
     JCheckBox talkPageCreateCheckBox;
-    JTextField talkPageCreateTextField;
+    JTextArea talkPageCreateTextField;
 
     private JButton searchButton;
 
-    private JPanel pagesSelectionPanel;
     private JButton pagesSelectAllButton;
     private JButton pagesDeselectAllButton;
-    private JPanel pagesPanel;
     private JScrollPane scrollPane;
     CheckBoxList pageList;
-    private JPanel exportPanel;
     private JButton exportWikiLinksButton;
     private JButton exportURLLinksButton; //TODO
-    private JPanel saveDumpPanel;
-    private JLabel saveDumpLabel;
     private JButton saveDumpButton;
-    private JPanel bottomPanel;
-    private JPanel summaryPanel;
-    private JLabel summaryLabel;
     JTextField summaryTextField;
-    private JPanel minorPanel;
     JCheckBox minorCheckBox;
-    private JPanel runPanel;
     private JButton runButton;
     private JButton runTalkPageButton;
 
     private JFrame confirmEditFrame;
-    private JPanel confirmEditTitlePanel;
-    private JLabel confirmEditTitleLabel;
     private JTextField confirmEditTitleTextField;
-    private JPanel confirmEditChangesPanel;
-    private JLabel confirmEditChangesLabel;
-    private JPanel confirmEditTextPanePanel;
     private JScrollPane oldScrollPane;
     private JTextPane oldTextPane;
     private JScrollPane newScrollPane;
     private JTextPane newTextPane;
-    private JPanel confirmEditSummaryPanel;
-    private JLabel confirmEditSummaryLabel;
     private JTextField confirmEditSummaryTextField;
-    private JPanel confirmEditButtonPanel;
     private JButton confirmEditButton;
     private JButton confirmEditCancelButton;
-    private JPanel confirmEditMinorPanel;
     private JCheckBox confirmEditMinorCheckBox;
 
     private int confirmEditIndex = -1; //when getNextSelectedPage is called for the first time, this var is set to 0 and does make sense
@@ -203,14 +154,14 @@ public class Main extends JFrame implements ActionListener {
         SwingUtilities.updateComponentTreeUI(this);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new GridLayout(1, 2));
-        leftPanel = new JPanel(new GridLayout(29, 1));
+        JPanel leftPanel = new JPanel(new GridLayout(29, 1));
 
         //LEFT PANEL
         allPages = new ArrayList<WikiPage>();
         foundPages = new ArrayList<WikiPage>();
 
-        topPanel = new JPanel(new GridLayout(1,2));
-        nactiSouborLabel = new JLabel("Načti databázový dump:");
+        JPanel topPanel = new JPanel(new GridLayout(1,2));
+        JLabel nactiSouborLabel = new JLabel("Načti databázový dump:");
         topPanel.add(nactiSouborLabel);
         nactiSoubor = new JButton("…");
         nactiSoubor.addActionListener(this);
@@ -232,14 +183,14 @@ public class Main extends JFrame implements ActionListener {
         apiURLCombo = new JComboBox(apis);
         leftPanel.add(apiURLCombo);                                              //+row in GridLayout
         apiURLCombo.setEditable(true);
-        loginPanel = new JPanel(new GridLayout(1,2));
-        loginNameLabel = new JLabel("Uživatelské jméno:");
+        JPanel loginPanel = new JPanel(new GridLayout(1,2));
+        JLabel loginNameLabel = new JLabel("Uživatelské jméno:");
         loginName = new JTextField(20);
         loginPanel.add(loginNameLabel);
         loginPanel.add(loginName);
         leftPanel.add(loginPanel);                                               //+row in GridLayout
-        passwordPanel = new JPanel(new GridLayout(1,2));
-        passwordLabel = new JLabel("Heslo:");
+        JPanel passwordPanel = new JPanel(new GridLayout(1,2));
+        JLabel passwordLabel = new JLabel("Heslo:");
         password = new JPasswordField(20);
         passwordPanel.add(passwordLabel);
         passwordPanel.add(password);
@@ -251,7 +202,7 @@ public class Main extends JFrame implements ActionListener {
         leftPanel.add(new JSeparator(JSeparator.HORIZONTAL));                    //+row in GridLayout
 
         //SEARCH
-        importCriteriaPanel = new JPanel(new GridLayout(1, 2));
+        JPanel importCriteriaPanel = new JPanel(new GridLayout(1, 2));
         importCriteriaButton = new JButton("Importovat kritéria");
         importCriteriaButton.addActionListener(this);
         importCriteriaButton.setActionCommand("importCriteria");
@@ -267,8 +218,8 @@ public class Main extends JFrame implements ActionListener {
         searchWhileParsing.setActionCommand("toggleSearchWhileParsing");
         leftPanel.add(searchWhileParsing);                                       //+row in GridLayout
         
-        searchLimitPanel = new JPanel(new GridLayout(1,2));
-        searchLimitLabel = new JLabel("Limit hledaných výsledků:");
+        JPanel searchLimitPanel = new JPanel(new GridLayout(1,2));
+        JLabel searchLimitLabel = new JLabel("Limit hledaných výsledků:");
         String[] limits = { "10", "100", "200", "500", "1000" };
         searchLimitCombo = new JComboBox(limits);
         searchLimitCombo.setEnabled(false);
@@ -276,8 +227,8 @@ public class Main extends JFrame implements ActionListener {
         searchLimitPanel.add(searchLimitCombo);
         leftPanel.add(searchLimitPanel);                                         //+row in GridLayout
 
-        searchOffsetPanel = new JPanel(new GridLayout(1,2));
-        searchOffsetLabel = new JLabel("Přeskočit nalezených výsledků:");
+        JPanel searchOffsetPanel = new JPanel(new GridLayout(1,2));
+        JLabel searchOffsetLabel = new JLabel("Přeskočit nalezených výsledků:");
         SpinnerNumberModel offsetModel = new SpinnerNumberModel(0, 0, 1000, 50);
         searchOffsetSpinner = new JSpinner(offsetModel);
         searchOffsetSpinner.setEnabled(false);
@@ -285,7 +236,7 @@ public class Main extends JFrame implements ActionListener {
         searchOffsetPanel.add(searchOffsetSpinner);
         leftPanel.add(searchOffsetPanel);                                        //+row in GridLayout
 
-        stringTitleSearchPanel = new JPanel(new GridLayout(1, 2));
+        JPanel stringTitleSearchPanel = new JPanel(new GridLayout(1, 2));
         stringTitleSearchCheckBox = new JCheckBox("Název obsahuje:");
         stringTitleSearchCheckBox.addActionListener(this);
         stringTitleSearchCheckBox.setActionCommand("stringTitleSearch");
@@ -295,7 +246,7 @@ public class Main extends JFrame implements ActionListener {
         stringTitleSearchPanel.add(stringTitleSearchTextField);
         leftPanel.add(stringTitleSearchPanel);                                   //+row in GridLayout
 
-        stringTitleNegationPanel = new JPanel(new GridLayout(1, 2));
+        JPanel stringTitleNegationPanel = new JPanel(new GridLayout(1, 2));
         stringTitleNegationCheckBox = new JCheckBox("Název neobsahuje:");
         stringTitleNegationCheckBox.addActionListener(this);
         stringTitleNegationCheckBox.setActionCommand("stringTitleNegation");
@@ -305,7 +256,7 @@ public class Main extends JFrame implements ActionListener {
         stringTitleNegationPanel.add(stringTitleNegationTextField);
         leftPanel.add(stringTitleNegationPanel);                                 //+row in GridLayout
 
-        regexTitleSearchPanel = new JPanel(new GridLayout(1, 2));
+        JPanel regexTitleSearchPanel = new JPanel(new GridLayout(1, 2));
         regexTitleSearchCheckBox = new JCheckBox("Hledaný regulární výraz v názvu:");
         regexTitleSearchCheckBox.addActionListener(this);
         regexTitleSearchCheckBox.setActionCommand("regexTitleSearch");
@@ -315,7 +266,7 @@ public class Main extends JFrame implements ActionListener {
         regexTitleSearchPanel.add(regexTitleSearchTextField);
         leftPanel.add(regexTitleSearchPanel);                                    //+row in GridLayout
 
-        regexTitleNegationPanel = new JPanel(new GridLayout(1, 2));
+        JPanel regexTitleNegationPanel = new JPanel(new GridLayout(1, 2));
         regexTitleNegationCheckBox = new JCheckBox("Negativní regulární výraz v názvu:");
         regexTitleNegationCheckBox.addActionListener(this);
         regexTitleNegationCheckBox.setActionCommand("regexTitleNegation");
@@ -325,7 +276,7 @@ public class Main extends JFrame implements ActionListener {
         regexTitleNegationPanel.add(regexTitleNegationTextField);
         leftPanel.add(regexTitleNegationPanel);                                  //+row in GridLayout
 
-        stringSearchPanel = new JPanel(new GridLayout(1, 2));
+        JPanel stringSearchPanel = new JPanel(new GridLayout(1, 2));
         stringSearchCheckBox = new JCheckBox("Text článku obsahuje:");
         stringSearchCheckBox.addActionListener(this);
         stringSearchCheckBox.setActionCommand("stringSearch");
@@ -335,7 +286,7 @@ public class Main extends JFrame implements ActionListener {
         stringSearchPanel.add(stringSearchTextField);
         leftPanel.add(stringSearchPanel);                                        //+row in GridLayout
 
-        stringNegationPanel = new JPanel(new GridLayout(1, 2));
+        JPanel stringNegationPanel = new JPanel(new GridLayout(1, 2));
         stringNegationCheckBox = new JCheckBox("Text článku neobsahuje:");
         stringNegationCheckBox.addActionListener(this);
         stringNegationCheckBox.setActionCommand("stringNegation");
@@ -346,7 +297,7 @@ public class Main extends JFrame implements ActionListener {
         leftPanel.add(stringNegationPanel);                                      //+row in GridLayout
 
 
-        regexSearchPanel = new JPanel(new GridLayout(1, 2));
+        JPanel regexSearchPanel = new JPanel(new GridLayout(1, 2));
         regexSearchCheckBox = new JCheckBox("Hledaný regulární výraz v textu:");
         regexSearchCheckBox.addActionListener(this);
         regexSearchCheckBox.setActionCommand("regexSearch");
@@ -356,7 +307,7 @@ public class Main extends JFrame implements ActionListener {
         regexSearchPanel.add(regexSearchTextField);
         leftPanel.add(regexSearchPanel);                                         //+row in GridLayout
 
-        regexNegationPanel = new JPanel(new GridLayout(1, 2));
+        JPanel regexNegationPanel = new JPanel(new GridLayout(1, 2));
         regexNegationCheckBox = new JCheckBox("Negativní regulární výraz v textu:");
         regexNegationCheckBox.addActionListener(this);
         regexNegationCheckBox.setActionCommand("regexNegation");
@@ -366,18 +317,19 @@ public class Main extends JFrame implements ActionListener {
         regexNegationPanel.add(regexNegationTextField);
         leftPanel.add(regexNegationPanel);                                       //+row in GridLayout
 
-        replacePanel = new JPanel(new GridLayout(1,2));
+        JPanel replacePanel = new JPanel(new GridLayout(1,2));
         replaceCheckBox = new JCheckBox("Zaměnit za:");
         replaceCheckBox.addActionListener(this);
         replaceCheckBox.setActionCommand("replace");
         replaceCheckBox.setEnabled(false);
-        replaceTextField = new JTextField(20);
+        replaceTextField = new JTextArea(1, 20);
         replaceTextField.setEnabled(false);
+        JScrollPane replaceScrollPane = new JScrollPane(replaceTextField);
         replacePanel.add(replaceCheckBox);
-        replacePanel.add(replaceTextField);
+        replacePanel.add(replaceScrollPane);
         leftPanel.add(replacePanel);                                             //+row in GridLayout
 
-        talkPageNamespacePanel = new JPanel(new GridLayout(1, 2));
+        JPanel talkPageNamespacePanel = new JPanel(new GridLayout(1, 2));
         talkPageNamespaceCheckBox = new JCheckBox("Oddělovat diskusní stránky ve jmenném prostoru");
         talkPageNamespaceCheckBox.addActionListener(this);
         talkPageNamespaceCheckBox.setActionCommand("talkPageNamespace");
@@ -387,7 +339,7 @@ public class Main extends JFrame implements ActionListener {
         talkPageNamespacePanel.add(talkPageNamespaceTextField);
         leftPanel.add(talkPageNamespacePanel);                                   //+row in GridLayout
 
-        talkPagePanel = new JPanel(new GridLayout(1, 2));
+        JPanel talkPagePanel = new JPanel(new GridLayout(1, 2));
         talkPageMissingCheckBox = new JCheckBox("Nemá stránku v diskusním jmenném prostoru");
         talkPageMissingCheckBox.addActionListener(this);
         talkPageMissingCheckBox.setActionCommand("talkPageMissing");
@@ -400,7 +352,7 @@ public class Main extends JFrame implements ActionListener {
         talkPagePanel.add(talkPageCheckBox);
         leftPanel.add(talkPagePanel);                                            //+row in GridLayout
 
-        talkPageStringSearchPanel = new JPanel(new GridLayout(1, 2));
+        JPanel talkPageStringSearchPanel = new JPanel(new GridLayout(1, 2));
         talkPageStringSearchCheckBox = new JCheckBox("Která obsahuje text:");
         talkPageStringSearchCheckBox.addActionListener(this);
         talkPageStringSearchCheckBox.setActionCommand("talkPageStringSearch");
@@ -411,7 +363,7 @@ public class Main extends JFrame implements ActionListener {
         talkPageStringSearchPanel.add(talkPageStringSearchTextField);
         leftPanel.add(talkPageStringSearchPanel);                                //+row in GridLayout
 
-        talkPageStringNegationPanel = new JPanel(new GridLayout(1, 2));
+        JPanel talkPageStringNegationPanel = new JPanel(new GridLayout(1, 2));
         talkPageStringNegationCheckBox = new JCheckBox("Která neobsahuje text:");
         talkPageStringNegationCheckBox.addActionListener(this);
         talkPageStringNegationCheckBox.setActionCommand("talkPageStringNegation");
@@ -422,7 +374,7 @@ public class Main extends JFrame implements ActionListener {
         talkPageStringNegationPanel.add(talkPageStringNegationTextField);
         leftPanel.add(talkPageStringNegationPanel);                              //+row in GridLayout
 
-        talkPageRegexSearchPanel = new JPanel(new GridLayout(1, 2));
+        JPanel talkPageRegexSearchPanel = new JPanel(new GridLayout(1, 2));
         talkPageRegexSearchCheckBox = new JCheckBox("Jejíž text vyhovuje regulárnímu výrazu:");
         talkPageRegexSearchCheckBox.addActionListener(this);
         talkPageRegexSearchCheckBox.setActionCommand("talkPageRegexSearch");
@@ -433,7 +385,7 @@ public class Main extends JFrame implements ActionListener {
         talkPageRegexSearchPanel.add(talkPageRegexSearchTextField);
         leftPanel.add(talkPageRegexSearchPanel);                                 //+row in GridLayout
 
-        talkPageRegexNegationPanel = new JPanel(new GridLayout(1, 2));
+        JPanel talkPageRegexNegationPanel = new JPanel(new GridLayout(1, 2));
         talkPageRegexNegationCheckBox = new JCheckBox("Jejíž text nevyhovuje regulárnímu výrazu:");
         talkPageRegexNegationCheckBox.addActionListener(this);
         talkPageRegexNegationCheckBox.setActionCommand("talkPageRegexNegation");
@@ -444,26 +396,28 @@ public class Main extends JFrame implements ActionListener {
         talkPageRegexNegationPanel.add(talkPageRegexNegationTextField);
         leftPanel.add(talkPageRegexNegationPanel);                               //+row in GridLayout
 
-        talkPageReplacePanel = new JPanel(new GridLayout(1, 2));
+        JPanel talkPageReplacePanel = new JPanel(new GridLayout(1, 2));
         talkPageReplaceCheckBox = new JCheckBox("Zaměnit za:");
         talkPageReplaceCheckBox.addActionListener(this);
         talkPageReplaceCheckBox.setActionCommand("talkPageReplace");
         talkPageReplaceCheckBox.setEnabled(false);
-        talkPageReplaceTextField = new JTextField(20);
+        talkPageReplaceTextField = new JTextArea(1, 20);
         talkPageReplaceTextField.setEnabled(false);
+        JScrollPane talkPageReplaceScrollPane = new JScrollPane(talkPageReplaceTextField);
         talkPageReplacePanel.add(talkPageReplaceCheckBox);
-        talkPageReplacePanel.add(talkPageReplaceTextField);
+        talkPageReplacePanel.add(talkPageReplaceScrollPane);
         leftPanel.add(talkPageReplacePanel);                                     //+row in GridLayout
 
-        talkPageCreatePanel = new JPanel(new GridLayout(1, 2));
+        JPanel talkPageCreatePanel = new JPanel(new GridLayout(1, 2));
         talkPageCreateCheckBox = new JCheckBox("Vytvořit diskusní stránku s textem:");
         talkPageCreateCheckBox.addActionListener(this);
         talkPageCreateCheckBox.setActionCommand("talkPageCreate");
         talkPageCreateCheckBox.setEnabled(false);
-        talkPageCreateTextField = new JTextField(20);
+        talkPageCreateTextField = new JTextArea(1, 20);
         talkPageCreateTextField.setEnabled(false);
+        JScrollPane talkPageCreateScrollPane = new JScrollPane(talkPageCreateTextField);
         talkPageCreatePanel.add(talkPageCreateCheckBox);
-        talkPageCreatePanel.add(talkPageCreateTextField);
+        talkPageCreatePanel.add(talkPageCreateScrollPane);
         leftPanel.add(talkPageCreatePanel);                                      //+row in GridLayout
 
         searchButton = new JButton("Vyhledej");
@@ -474,10 +428,10 @@ public class Main extends JFrame implements ActionListener {
         add(leftPanel);
 
         //RIGHT PANEL
-        rightPanel = new JPanel();
+        JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));
 
-        pagesSelectionPanel = new JPanel(new GridLayout(1, 2));
+        JPanel pagesSelectionPanel = new JPanel(new GridLayout(1, 2));
         pagesSelectAllButton = new JButton("Označ všechny");
         pagesSelectAllButton.addActionListener(this);
         pagesSelectAllButton.setActionCommand("pagesSelectAll");
@@ -488,15 +442,15 @@ public class Main extends JFrame implements ActionListener {
         pagesSelectionPanel.add(pagesDeselectAllButton);
         rightPanel.add(pagesSelectionPanel);
 
-        pagesPanel = new JPanel(new GridLayout(1,1));
+        JPanel pagesPanel = new JPanel(new GridLayout(1,1));
         pageList = new CheckBoxList();
         scrollPane = new JScrollPane(pageList);
         pagesPanel.add(scrollPane);
         pagesPanel.setPreferredSize(new Dimension(600, 700));
         rightPanel.add(pagesPanel);
 
-        saveDumpPanel = new JPanel(new GridLayout(1,2));
-        saveDumpLabel = new JLabel("Ulož tyto stránky do dumpu:");
+        JPanel saveDumpPanel = new JPanel(new GridLayout(1,2));
+        JLabel saveDumpLabel = new JLabel("Ulož tyto stránky do dumpu:");
         saveDumpButton = new JButton("…");
         saveDumpButton.addActionListener(this);
         saveDumpButton.setActionCommand("saveDump");
@@ -504,7 +458,7 @@ public class Main extends JFrame implements ActionListener {
         saveDumpPanel.add(saveDumpButton);
         rightPanel.add(saveDumpPanel);
 
-        exportPanel = new JPanel(new GridLayout(1, 2));
+        JPanel exportPanel = new JPanel(new GridLayout(1, 2));
         exportURLLinksButton = new JButton("Seznam URL");
         exportURLLinksButton.addActionListener(this);
         exportURLLinksButton.setActionCommand("exportURL");
@@ -515,17 +469,17 @@ public class Main extends JFrame implements ActionListener {
         exportPanel.add(exportWikiLinksButton);
         rightPanel.add(exportPanel);
 
-        bottomPanel = new JPanel(new GridLayout(3,1));
-        summaryPanel = new JPanel(new GridLayout(1,2));
-        summaryLabel = new JLabel("Souhrn editace:");
+        JPanel bottomPanel = new JPanel(new GridLayout(3,1));
+        JPanel summaryPanel = new JPanel(new GridLayout(1,2));
+        JLabel summaryLabel = new JLabel("Souhrn editace:");
         summaryTextField = new JTextField(" (via OmniBot)");
         summaryPanel.add(summaryLabel);
         summaryPanel.add(summaryTextField);
-        minorPanel = new JPanel(new GridLayout(1, 1));
+        JPanel minorPanel = new JPanel(new GridLayout(1, 1));
         minorCheckBox = new JCheckBox("Malá editace");
         minorPanel.add(minorCheckBox);
         bottomPanel.add(minorPanel);
-        runPanel = new JPanel(new GridLayout(1, 2));
+        JPanel runPanel = new JPanel(new GridLayout(1, 2));
         runButton = new JButton("Spustit");
         runButton.addActionListener(this);
         runButton.setActionCommand("run");
@@ -1110,8 +1064,8 @@ public class Main extends JFrame implements ActionListener {
             confirmEditFrame = new JFrame("Potvrďte editaci…");
             confirmEditFrame.setSize(1200, 800);
             confirmEditFrame.setLayout(new BoxLayout(confirmEditFrame.getContentPane(), BoxLayout.PAGE_AXIS));
-            confirmEditTitlePanel = new JPanel(new GridLayout(1, 2));
-            confirmEditTitleLabel = new JLabel("Název:");
+            JPanel confirmEditTitlePanel = new JPanel(new GridLayout(1, 2));
+            JLabel confirmEditTitleLabel = new JLabel("Název:");
             confirmEditTitleTextField = new JTextField(title);
             confirmEditTitleTextField.setEditable(false);
             confirmEditTitlePanel.add(confirmEditTitleLabel);
@@ -1141,12 +1095,12 @@ public class Main extends JFrame implements ActionListener {
                 confirmEditFrame.add(talkpageTimestampPanel);
             }
 
-            confirmEditChangesPanel = new JPanel(new GridLayout(1, 1));
-            confirmEditChangesLabel = new JLabel("Změny");
+            JPanel confirmEditChangesPanel = new JPanel(new GridLayout(1, 1));
+            JLabel confirmEditChangesLabel = new JLabel("Změny");
             confirmEditChangesPanel.add(confirmEditChangesLabel);
             confirmEditFrame.add(confirmEditChangesPanel);
 
-            confirmEditTextPanePanel = new JPanel(new GridLayout(1, 2));
+            JPanel confirmEditTextPanePanel = new JPanel(new GridLayout(1, 2));
             confirmEditTextPanePanel.setSize(1200, 600);
             oldTextPane = new JTextPane();
             oldTextPane.setEditable(false);
@@ -1221,20 +1175,20 @@ public class Main extends JFrame implements ActionListener {
             confirmEditTextPanePanel.add(newScrollPane);
             confirmEditFrame.add(confirmEditTextPanePanel);
 
-            confirmEditSummaryPanel = new JPanel(new GridLayout(1, 2));
-            confirmEditSummaryLabel = new JLabel("Souhrn editace");
+            JPanel confirmEditSummaryPanel = new JPanel(new GridLayout(1, 2));
+            JLabel confirmEditSummaryLabel = new JLabel("Souhrn editace");
             confirmEditSummaryTextField = new JTextField(summaryTextField.getText());
             confirmEditSummaryPanel.add(confirmEditSummaryLabel);
             confirmEditSummaryPanel.add(confirmEditSummaryTextField);
             confirmEditFrame.add(confirmEditSummaryPanel);
 
-            confirmEditMinorPanel = new JPanel(new GridLayout(1, 1));
+            JPanel confirmEditMinorPanel = new JPanel(new GridLayout(1, 1));
             confirmEditMinorCheckBox = new JCheckBox("Malá editace");
             confirmEditMinorCheckBox.setSelected(minorCheckBox.isSelected());
             confirmEditMinorPanel.add(confirmEditMinorCheckBox);
             confirmEditFrame.add(confirmEditMinorPanel); //TODO checkMinor on main Frame
 
-            confirmEditButtonPanel = new JPanel(new GridLayout(1, 2));
+            JPanel confirmEditButtonPanel = new JPanel(new GridLayout(1, 2));
             confirmEditButton = new JButton("OK");
             confirmEditButton.addActionListener(this);
             confirmEditButton.setActionCommand("editConfirmed");
