@@ -355,7 +355,7 @@ public class CriteriaParser extends DefaultHandler {
         }
         if (talkpageNegationString) {
             main.talkPageStringNegationCheckBox.doClick();
-            main.talkPageStringNegationCheckBox.setText(talkpageNegationStringValue);
+            main.talkPageStringNegationTextField.setText(talkpageNegationStringValue);
         }
         if (talkpageRegex) {
             main.talkPageRegexSearchCheckBox.doClick();

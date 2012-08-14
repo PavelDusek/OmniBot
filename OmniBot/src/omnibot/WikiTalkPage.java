@@ -40,6 +40,7 @@ public class WikiTalkPage {
         revisionContributor = page.getRevisionContributor();
         revisionContributor = page.getRevisionContributorId();
         revisionComment = page.getRevisionComment();
+        pageText = page.getPageText();
         minor = page.isMinor();
     }
 
@@ -140,17 +141,25 @@ public class WikiTalkPage {
         }
     }
     public boolean regexContains(String regex) {
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(pageText);
-        return m.find();
-    }
-    public boolean regexDoesNotContain(String regex) {
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(pageText);
-        if (m.find()) {
+        if (pageText.isEmpty()) {
             return false;
         } else {
+            Pattern p = Pattern.compile(regex);
+            Matcher m = p.matcher(pageText);
+            return m.find();
+        }
+    }
+    public boolean regexDoesNotContain(String regex) {
+        if (pageText.isEmpty()) {
             return true;
+        } else {
+            Pattern p = Pattern.compile(regex);
+            Matcher m = p.matcher(pageText);
+            if (m.find()) {
+                return false;
+            } else {
+                return true;
+            }
         }
     }
     public String getFormattedSearch() {

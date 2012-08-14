@@ -1145,8 +1145,8 @@ public class Main extends JFrame implements ActionListener {
                         searchString = talkPageStringSearchTextField.getText();
                         replacement = talkPageReplaceTextField.getText();
                     } else if (talkPageRegexSearchTextField.isEnabled() && (!talkPageRegexSearchTextField.getText().isEmpty()) ) {
-                        searchString = regexSearchTextField.getText();
-                        replacement = replaceTextField.getText();
+                        searchString = talkPageRegexSearchTextField.getText();
+                        replacement = talkPageReplaceTextField.getText();
                     } else {
                         JOptionPane.showMessageDialog(this, "Musíte vybrat, který text má být nahrazen!", "Pozor!", JOptionPane.ERROR_MESSAGE);
                     }
@@ -1278,13 +1278,13 @@ public class Main extends JFrame implements ActionListener {
         talkPageReplaceCheckBox.setEnabled(true);
         talkPageStringSearchCheckBox.setEnabled(false);
         talkPageStringSearchTextField.setEnabled(false);
-        talkPageStringNegationCheckBox.setEnabled(false);
-        talkPageStringNegationTextField.setEnabled(false);
+        //talkPageStringNegationCheckBox.setEnabled(false);
+        //talkPageStringNegationTextField.setEnabled(false);
     }
     private void disableTalkPageRegexSearchSettings() {
         talkPageRegexSearchTextField.setEnabled(false);
         talkPageStringSearchCheckBox.setEnabled(true);
-        talkPageStringNegationCheckBox.setEnabled(true);
+        //talkPageStringNegationCheckBox.setEnabled(true);
         talkPageReplaceCheckBox.setEnabled(false);
     }
     private void enableTalkPageStringSearchSettings() {
@@ -1292,13 +1292,13 @@ public class Main extends JFrame implements ActionListener {
         talkPageReplaceCheckBox.setEnabled(true);
         talkPageRegexSearchCheckBox.setEnabled(false);
         talkPageRegexSearchTextField.setEnabled(false);
-        talkPageRegexNegationCheckBox.setEnabled(false);
-        talkPageRegexNegationTextField.setEnabled(false);
+        //talkPageRegexNegationCheckBox.setEnabled(false);
+        //talkPageRegexNegationTextField.setEnabled(false);
     }
     private void disableTalkPageStringSearchSettings() {
         talkPageStringSearchTextField.setEnabled(false);
         talkPageRegexSearchCheckBox.setEnabled(true);
-        talkPageRegexNegationCheckBox.setEnabled(true);
+        //talkPageRegexNegationCheckBox.setEnabled(true);
         talkPageReplaceCheckBox.setEnabled(false);
     }
     private void enableSearchWhileParsingSettings() {
@@ -1441,6 +1441,12 @@ public class Main extends JFrame implements ActionListener {
 
         JCheckBox checkbox = (JCheckBox) pageList.getModel().getElementAt(confirmEditIndex);
         while (!checkbox.isSelected()) {
+            confirmEditIndex++;
+            if (confirmEditIndex >= max) {
+                //every element of the list has been already returned
+                confirmEditIndex = 0;
+                return null;
+            }
             checkbox = (JCheckBox) pageList.getModel().getElementAt(confirmEditIndex);
         }
         return getPage(checkbox.getText());
@@ -1614,9 +1620,12 @@ public class Main extends JFrame implements ActionListener {
             }
             if (e.getActionCommand().equals("talkPageRegexNegation")) {
                 if (talkPageRegexNegationCheckBox.isSelected()) {
+                    talkPageStringNegationCheckBox.setEnabled(false);
+                    talkPageStringNegationTextField.setEnabled(false);
                     talkPageRegexNegationTextField.setEnabled(true);
                 } else {
                     talkPageRegexNegationTextField.setEnabled(false);
+                    talkPageStringNegationCheckBox.setEnabled(true);
                 }
             }
             if (e.getActionCommand().equals("talkPageRegexSearch")) {
@@ -1630,7 +1639,10 @@ public class Main extends JFrame implements ActionListener {
             if (e.getActionCommand().equals("talkPageStringNegation")) {
                 if (talkPageStringNegationCheckBox.isSelected()) {
                     talkPageStringNegationTextField.setEnabled(true);
+                    talkPageRegexNegationCheckBox.setEnabled(false);
+                    talkPageRegexNegationTextField.setEnabled(false);
                 } else {
+                    talkPageRegexNegationCheckBox.setEnabled(true);
                     talkPageStringNegationTextField.setEnabled(false);
                 }
             }
@@ -1818,6 +1830,7 @@ public class Main extends JFrame implements ActionListener {
             }
         } catch (Exception excp) {
             showError(excp);
+            setCursor(Cursor.getDefaultCursor());
         }
     }
 }
