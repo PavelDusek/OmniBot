@@ -236,7 +236,7 @@ public class CriteriaParser extends DefaultHandler {
     }
     @Override
     public void characters(char[] ch, int start, int length) {
-        value += new String(ch, start, length).trim();
+        value += new String(ch, start, length);
     }
     public void parse (String pathToXmlFile)
             throws org.xml.sax.SAXException, java.io.IOException {

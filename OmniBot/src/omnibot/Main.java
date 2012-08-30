@@ -117,11 +117,14 @@ public class Main extends JFrame implements ActionListener {
     private JButton pagesDeselectAllButton;
     private JScrollPane scrollPane;
     CheckBoxList pageList;
-    private JButton exportWikiLinksButton;
+    private JButton exportTitleNamesButton;
     private JButton exportURLLinksButton; //TODO
+    private JButton exportResultsButton;
+    private JButton exportTalkPageResultsButton;
     private JButton saveDumpButton;
     JTextField summaryTextField;
     JCheckBox minorCheckBox;
+    JCheckBox botCheckBox;
     private JButton runButton;
     private JButton runTalkPageButton;
 
@@ -135,14 +138,14 @@ public class Main extends JFrame implements ActionListener {
     private JButton confirmEditButton;
     private JButton confirmEditCancelButton;
     private JCheckBox confirmEditMinorCheckBox;
+    private JCheckBox confirmEditBotCheckBox;
 
-    private int confirmEditIndex = -1; //when getNextSelectedPage is called for the first time, this var is set to 0 and does make sense
+    private int confirmEditIndex = 0;
 
-    private JFrame exportURLFrame;
-    private JFrame exportWikiFrame;
-
+    private JFrame exportFrame;
     List<JCheckBox> checkBoxes;
 
+    private WikiPage pageToEdit;
 
 
     Main() {
@@ -463,11 +466,26 @@ public class Main extends JFrame implements ActionListener {
         exportURLLinksButton.addActionListener(this);
         exportURLLinksButton.setActionCommand("exportURL");
         exportPanel.add(exportURLLinksButton);
-        exportWikiLinksButton = new JButton("Seznam wikiodkazů");
-        exportWikiLinksButton.addActionListener(this);
-        exportWikiLinksButton.setActionCommand("exportWiki");
-        exportPanel.add(exportWikiLinksButton);
+        exportTitleNamesButton = new JButton("Seznam názvů stránek");
+        exportTitleNamesButton.addActionListener(this);
+        exportTitleNamesButton.setActionCommand("exportTitleNames");
+        exportPanel.add(exportTitleNamesButton);
         rightPanel.add(exportPanel);
+
+        JPanel exportResultsPanel = new JPanel(new GridLayout(1,2));
+        exportResultsButton = new JButton("Export výsledků");
+        exportResultsButton.addActionListener(this);
+        exportResultsButton.setActionCommand("exportResults");
+        exportResultsButton.setEnabled(false);
+        exportTalkPageResultsButton = new JButton("Export výsledků z diskuzí");
+        exportTalkPageResultsButton.addActionListener(this);
+        exportTalkPageResultsButton.setActionCommand("exportTalkPageResults");
+        exportTalkPageResultsButton.setEnabled(false);
+        exportResultsPanel.add(exportResultsButton);
+        exportResultsPanel.add(exportTalkPageResultsButton);
+        rightPanel.add(exportResultsPanel);
+
+
 
         JPanel bottomPanel = new JPanel(new GridLayout(3,1));
         JPanel summaryPanel = new JPanel(new GridLayout(1,2));
@@ -475,10 +493,14 @@ public class Main extends JFrame implements ActionListener {
         summaryTextField = new JTextField(" (via OmniBot)");
         summaryPanel.add(summaryLabel);
         summaryPanel.add(summaryTextField);
-        JPanel minorPanel = new JPanel(new GridLayout(1, 1));
+        JPanel minorPanel = new JPanel(new GridLayout(1, 2));
         minorCheckBox = new JCheckBox("Malá editace");
+        minorCheckBox.setSelected(true);
         minorPanel.add(minorCheckBox);
+        botCheckBox = new JCheckBox("Editovat jako bot");
+        botCheckBox.setSelected(true);
         bottomPanel.add(minorPanel);
+        bottomPanel.add(botCheckBox);
         JPanel runPanel = new JPanel(new GridLayout(1, 2));
         runButton = new JButton("Spustit");
         runButton.addActionListener(this);
@@ -611,7 +633,7 @@ public class Main extends JFrame implements ActionListener {
         }
         pageList.repaint();
     }
-    private void showError(Exception e) {
+    void showError(Exception e) {
         JOptionPane.showMessageDialog(this, e.getLocalizedMessage(), "Chyba!", JOptionPane.ERROR_MESSAGE);
     }
     private void exportCriteria(File f) {
@@ -1036,7 +1058,7 @@ public class Main extends JFrame implements ActionListener {
         return false;
     }
     private void confirmEdit() {
-        WikiPage page = getNextSelectedPage();
+        pageToEdit = getNextSelectedPage();
         WikiTalkPage talkpage;
         String pageText = "";
         String title = "";
@@ -1046,19 +1068,30 @@ public class Main extends JFrame implements ActionListener {
             talkpageNamespace = talkpageNamespace + ":";
         }
 
-        if (page != null) {
+        if (pageToEdit != null) {
             if (editTalkPages) {
-                talkpage = page.getTalkpage();
+                talkpage = pageToEdit.getTalkpage();
                 if (talkpage != null) {
                     title = talkpage.getTitle();
                     pageText = talkpage.getPageText();
                 } else {
-                    title = talkpageNamespace + page.getTitle();
+                    title = talkpageNamespace + pageToEdit.getTitle();
                     pageText = "";
                 }
             } else {
-                title = page.getTitle();
-                pageText = page.getPageText();
+                title = pageToEdit.getTitle();
+                pageText = pageToEdit.getPageText();
+            }
+            if (api != null) {
+                WikiPage apiPage = api.revision(pageToEdit.getTitle());
+                if (!apiPage.equalsTo(pageToEdit)) {
+                    //TODO
+                    JOptionPane.showMessageDialog(this, "Stránka byla od vytvoření databázového dumpu změněna. Ruším editaci.", "Pozor!", JOptionPane.INFORMATION_MESSAGE);
+                    confirmEditFrame.setVisible(false);
+                    return;
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Nejste přihlášeni k API! Pracujete offline!", "Pozor!", JOptionPane.ERROR_MESSAGE);
             }
 
             confirmEditFrame = new JFrame("Potvrďte editaci…");
@@ -1074,7 +1107,7 @@ public class Main extends JFrame implements ActionListener {
 
             JPanel timestampPanel = new JPanel(new GridLayout(1, 2));
             JLabel timestampLabel = new JLabel("Timestamp článku:");
-            JTextField timestampTextField = new JTextField(page.getRevisionTimestamp());
+            JTextField timestampTextField = new JTextField(pageToEdit.getRevisionTimestamp());
             timestampTextField.setEditable(false);
             timestampPanel.add(timestampLabel);
             timestampPanel.add(timestampTextField);
@@ -1084,8 +1117,8 @@ public class Main extends JFrame implements ActionListener {
                 JPanel talkpageTimestampPanel = new JPanel(new GridLayout(1, 2));
                 JLabel talkpageTimestampLabel = new JLabel("Timestamp diskusní stránky:");
                 JTextField talkpageTimestampTextField = new JTextField();
-                if (page.getTalkpage() != null) {
-                    talkpageTimestampTextField.setText(page.getTalkpage().getRevisionTimestamp());
+                if (pageToEdit.getTalkpage() != null) {
+                    talkpageTimestampTextField.setText(pageToEdit.getTalkpage().getRevisionTimestamp());
                 } else {
                     talkpageTimestampTextField.setText("-");
                 }
@@ -1182,10 +1215,13 @@ public class Main extends JFrame implements ActionListener {
             confirmEditSummaryPanel.add(confirmEditSummaryTextField);
             confirmEditFrame.add(confirmEditSummaryPanel);
 
-            JPanel confirmEditMinorPanel = new JPanel(new GridLayout(1, 1));
+            JPanel confirmEditMinorPanel = new JPanel(new GridLayout(1, 2));
             confirmEditMinorCheckBox = new JCheckBox("Malá editace");
             confirmEditMinorCheckBox.setSelected(minorCheckBox.isSelected());
             confirmEditMinorPanel.add(confirmEditMinorCheckBox);
+            confirmEditBotCheckBox = new JCheckBox("Editovat jako bot");
+            confirmEditBotCheckBox.setSelected(botCheckBox.isSelected());
+            confirmEditMinorPanel.add(confirmEditBotCheckBox);
             confirmEditFrame.add(confirmEditMinorPanel); //TODO checkMinor on main Frame
 
             JPanel confirmEditButtonPanel = new JPanel(new GridLayout(1, 2));
@@ -1276,6 +1312,7 @@ public class Main extends JFrame implements ActionListener {
     private void enableTalkPageRegexSearchSettings() {
         talkPageRegexSearchTextField.setEnabled(true);
         talkPageReplaceCheckBox.setEnabled(true);
+        exportTalkPageResultsButton.setEnabled(true);
         talkPageStringSearchCheckBox.setEnabled(false);
         talkPageStringSearchTextField.setEnabled(false);
         //talkPageStringNegationCheckBox.setEnabled(false);
@@ -1283,6 +1320,7 @@ public class Main extends JFrame implements ActionListener {
     }
     private void disableTalkPageRegexSearchSettings() {
         talkPageRegexSearchTextField.setEnabled(false);
+        exportTalkPageResultsButton.setEnabled(false);
         talkPageStringSearchCheckBox.setEnabled(true);
         //talkPageStringNegationCheckBox.setEnabled(true);
         talkPageReplaceCheckBox.setEnabled(false);
@@ -1330,6 +1368,7 @@ public class Main extends JFrame implements ActionListener {
     }
     private void enableRegexTextSearchSettings() {
         regexSearchTextField.setEnabled(true);
+        exportResultsButton.setEnabled(true);
         stringSearchCheckBox.setEnabled(false);
         stringSearchTextField.setEnabled(false);
         stringNegationCheckBox.setEnabled(false);
@@ -1338,6 +1377,7 @@ public class Main extends JFrame implements ActionListener {
     }
     private void disableRegexTextSearchSettings() {
         regexSearchTextField.setEnabled(false);
+        exportResultsButton.setEnabled(false);
         stringSearchCheckBox.setEnabled(true);
         stringNegationCheckBox.setEnabled(true);
         replaceCheckBox.setEnabled(false);
@@ -1417,8 +1457,15 @@ public class Main extends JFrame implements ActionListener {
         return styledTexts;
     }
     private void makeEdit() {
-        //TODO
-        JOptionPane.showMessageDialog(this, "Provedl bych editaci.", "Editace", JOptionPane.INFORMATION_MESSAGE);
+        api.editPage(
+                pageToEdit,
+                newTextPane.getText(),
+                "Pokus: Blablabla",
+                confirmEditMinorCheckBox.isSelected(),
+                confirmEditBotCheckBox.isSelected()
+        );
+        JCheckBox checkBox = (JCheckBox) pageList.getModel().getElementAt(confirmEditIndex);
+        checkBox.setSelected(false);
     }
     private WikiPage getPage(String pageTitle) {
         WikiPage page;
@@ -1431,7 +1478,6 @@ public class Main extends JFrame implements ActionListener {
         return null;
     }
     private WikiPage getNextSelectedPage() {
-        confirmEditIndex++;
         int max = pageList.getModel().getSize();
         if (confirmEditIndex >= max) {
             //every element of the list has been already returned
@@ -1452,46 +1498,42 @@ public class Main extends JFrame implements ActionListener {
         return getPage(checkbox.getText());
     }
     public void exportURL() {
-        exportURLFrame = new JFrame("Seznam URL");
-        exportURLFrame.setLayout(new BoxLayout(exportURLFrame.getContentPane(), BoxLayout.PAGE_AXIS));
-        String urls = "";
+        String wsUrls = "";
+        String wlUrls = "";
+        String twUrls = "";
+        String enUrls = "";
+        String csUrls = "";
         JCheckBox checkBox;
         for (int i = 0; i < pageList.getModel().getSize(); i++) {
             checkBox = (JCheckBox) pageList.getModel().getElementAt(i);
             if (checkBox.isSelected()) {
-                urls += "http://www.wikiskripta.eu/index.php/" + checkBox.getText().replaceAll(" ", "_") + "\n";
+                wsUrls += "http://www.wikiskripta.eu/index.php/" + checkBox.getText().replaceAll(" ", "_") + "\n";
+                wlUrls += "http://www.wikilectures.eu/index.php/" + checkBox.getText().replaceAll(" ", "_") + "\n";
+                twUrls += "http://test-wiki2.lf1.cuni.cz/index.php/" + checkBox.getText().replaceAll(" ", "_") + "\n";
+                enUrls += "http://en.wikipedia.org/wiki/" + checkBox.getText().replaceAll(" ", "_") + "\n";
+                csUrls += "http://cs.wikipedia.org/wiki/" + checkBox.getText().replaceAll(" ", "_") + "\n";
             }
         }
-        JTextArea area = new JTextArea(urls);
-        JScrollPane scrollPane = new JScrollPane(area);
-        exportURLFrame.add(scrollPane);
-        JButton zavrit = new JButton("Zavřít");
-        zavrit.addActionListener(this);
-        zavrit.setActionCommand("zavritExportURL");
-        exportURLFrame.add(zavrit);
-        exportURLFrame.setSize(1200, 800);
-        exportURLFrame.setVisible(true);
+        String[] texts = {wsUrls, wlUrls, twUrls, enUrls, csUrls};
+        showExport(texts);
     }
-    public void exportWiki() {
-        exportWikiFrame = new JFrame("Seznam Wikiodkazů");
-        exportWikiFrame.setLayout(new BoxLayout(exportWikiFrame.getContentPane(), BoxLayout.PAGE_AXIS));
+    public void exportTitleNames() {
         String wikilinks = "";
+        String pagenames = "";
         JCheckBox checkBox;
         for (int i = 0; i < pageList.getModel().getSize(); i++) {
             checkBox = (JCheckBox) pageList.getModel().getElementAt(i);
             if (checkBox.isSelected()) {
+                if (pagenames.isEmpty()) {
+                    pagenames = checkBox.getText();
+                } else {
+                    pagenames += "|" + checkBox.getText();
+                }
                 wikilinks += "* [[" + checkBox.getText() + "]]\n";
             }
         }
-        JTextArea area = new JTextArea(wikilinks);
-        JScrollPane scrollPane = new JScrollPane(area);
-        exportWikiFrame.add(scrollPane);
-        JButton zavrit = new JButton("Zavřít");
-        zavrit.addActionListener(this);
-        zavrit.setActionCommand("zavritExportWiki");
-        exportWikiFrame.add(zavrit);
-        exportWikiFrame.setSize(1200, 800);
-        exportWikiFrame.setVisible(true);
+        String[] texts = {wikilinks, pagenames};
+        showExport(texts);
     }
     private boolean isTalkpage(WikiPage page) {
         String title = page.getTitle();
@@ -1518,6 +1560,76 @@ public class Main extends JFrame implements ActionListener {
             }
         }
         return null;
+    }
+    private void exportResults() {
+        String results = "";
+        String regexResults = "";
+        JCheckBox checkBox;
+        WikiPage page;
+        String result;
+        String regex = regexSearchTextField.getText();
+        for (int i = 0; i < pageList.getModel().getSize(); i++) {
+            checkBox = (JCheckBox) pageList.getModel().getElementAt(i);
+            if (checkBox.isSelected()) {
+                page = getPage(checkBox.getText());
+                result = page.getRegexGroup(regex);
+                if (result != null && results.isEmpty()) {
+                    results = result;
+                    regexResults = result;
+                }
+                if (result != null && (!results.isEmpty())) {
+                    results += "\n" + result;
+                    regexResults = "|" + result;
+                }
+
+            }
+        }
+        String[] texts = {results, regexResults};
+        showExport(texts);
+    }
+    private void exportTalkPageResults() {
+        String results = "";
+        String regexResults = "";
+        JCheckBox checkBox;
+        WikiPage page;
+        String result;
+        String regex = regexSearchTextField.getText();
+        for (int i = 0; i < pageList.getModel().getSize(); i++) {
+            checkBox = (JCheckBox) pageList.getModel().getElementAt(i);
+            if (checkBox.isSelected()) {
+                page = getPage(checkBox.getText());
+                result = page.getRegexGroup(regex);
+                if (result != null && results.isEmpty()) {
+                    results = result;
+                    regexResults = result;
+                }
+                if (result != null && (!results.isEmpty())) {
+                    results += "\n" + result;
+                    regexResults = "|" + result;
+                }
+
+            }
+        }
+        String[] texts = {results, regexResults};
+        showExport(texts);
+    }
+    private void showExport(String[] texts) {
+        exportFrame = new JFrame("Export");
+        exportFrame.setLayout(new BoxLayout(exportFrame.getContentPane(), BoxLayout.PAGE_AXIS));
+        JTextArea area;
+        JScrollPane scrollPane;
+        for (int i = 0; i < texts.length; i++) {
+            area = new JTextArea(texts[i]);
+            scrollPane = new JScrollPane(area);
+            exportFrame.add(scrollPane);
+        }
+        JButton zavrit = new JButton("Zavřít");
+        zavrit.addActionListener(this);
+        zavrit.setActionCommand("zavritExport");
+        exportFrame.add(zavrit);
+        exportFrame.setSize(1200, 800);
+        exportFrame.setVisible(true);
+
     }
 
     private void sortPages() {
@@ -1591,8 +1703,8 @@ public class Main extends JFrame implements ActionListener {
             if (e.getActionCommand().equals("exportURL")) {
                 exportURL();
             }
-            if (e.getActionCommand().equals("exportWiki")) {
-                exportWiki();
+            if (e.getActionCommand().equals("exportTitleNames")) {
+                exportTitleNames();
             }
             if (e.getActionCommand().equals("pagesSelectAll")) {
                 selectAllPages();
@@ -1602,7 +1714,8 @@ public class Main extends JFrame implements ActionListener {
             }
 
             if (e.getActionCommand().equals("login")) {
-                api = new WikiApi(loginName.getText(), password.getPassword(), this);
+                api = new WikiApi((String) apiURLCombo.getSelectedItem(), this);
+                api.login(loginName.getText(), password.getPassword());
             }
             if (e.getActionCommand().equals("talkPageCreate")) {
                 if (talkPageCreateCheckBox.isSelected()) {
@@ -1805,8 +1918,8 @@ public class Main extends JFrame implements ActionListener {
                 this.setCursor(Cursor.getDefaultCursor());
             }
             if (e.getActionCommand().equals("editConfirmed")) {
-                confirmEditFrame.setVisible(false);
                 makeEdit();
+                confirmEditFrame.setVisible(false);
                 confirmEdit();
             }
             if (e.getActionCommand().equals("editCanceled")) {
@@ -1822,11 +1935,14 @@ public class Main extends JFrame implements ActionListener {
                 editTalkPages = true;
                 confirmEdit();
             }
-            if (e.getActionCommand().equals("zavritExportURL")) {
-                exportURLFrame.setVisible(false);
+            if (e.getActionCommand().equals("zavritExport")) {
+                exportFrame.setVisible(false);
             }
-            if (e.getActionCommand().equals("zavritExportWiki")) {
-                exportWikiFrame.setVisible(false);
+            if (e.getActionCommand().equals("exportResults")) {
+                exportResults();
+            }
+            if (e.getActionCommand().equals("exportTalkPageResults")) {
+                exportTalkPageResults();
             }
         } catch (Exception excp) {
             showError(excp);

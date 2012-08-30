@@ -80,6 +80,7 @@ public class DBDumpSAX extends DefaultHandler {
     }
     @Override
     public void endElement(String uri, String name, String qName) {
+        value = value.trim();
         if (name.equals("revision")) {
             revisionOpen = false;
         }
@@ -137,7 +138,7 @@ public class DBDumpSAX extends DefaultHandler {
     }
     @Override
     public void characters(char [] ch, int start, int length) {
-        value = value + new String(ch, start, length).trim();
+        value = value + new String(ch, start, length);
     }
 
     public void parse(String pathToXml)

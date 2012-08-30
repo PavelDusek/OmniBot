@@ -187,8 +187,43 @@ public class WikiPage {
             return true;
         }
     }
-    public String getFormattedSearch() {
-        //TODO
-        return "";
+    public String getRegexGroup(String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(pageText);
+        return matcher.group();
+    }
+    public String getTalkPageRegexGroup(String regex) {
+        if (talkPage != null) {
+            return talkPage.getRegexGroup(regex);
+        } else {
+            return null;
+        }
+    }
+    public boolean equalsTo(WikiPage page) {
+        if (!page.getTitle().equals(pageTitle)) {
+            return false;
+        }
+        if (!page.getPageId().equals(pageId)) {
+            return false;
+        }
+        if (!page.getPageText().equals(pageText)) {
+            return false;
+        }
+        if (!page.getRevisionTimestamp().equals(revisionTimestamp)) {
+            return false;
+        }
+        if (!page.getRevisionId().equals(revisionId)) {
+            return false;
+        }
+        if (!page.getRevisionComment().equals(revisionComment)) {
+            return false;
+        }
+        if (!page.getRevisionContributor().equals(revisionContributor)) {
+            return false;
+        }
+        if (!page.getRevisionContributorId().equals(revisionContributorId)) {
+            return false;
+        }
+        return true;
     }
 }
