@@ -1460,7 +1460,7 @@ public class Main extends JFrame implements ActionListener {
         api.editPage(
                 pageToEdit,
                 newTextPane.getText(),
-                "Pokus: Blablabla",
+                confirmEditSummaryTextField.getText(),
                 confirmEditMinorCheckBox.isSelected(),
                 confirmEditBotCheckBox.isSelected()
         );

@@ -207,7 +207,11 @@ public class WikiApi extends DefaultHandler {
         } else if (name.equals("edit")) {
             String result = att.getValue("result");
             if (result.equals("Success")) {
-                JOptionPane.showMessageDialog(main, "Stránka " + att.getValue("title") + " byla editována!" , "OK!", JOptionPane.INFORMATION_MESSAGE);
+                if (doAttributesContains(att, "nochange")) {
+                    JOptionPane.showMessageDialog(main, "V textu nebyly provedeny žádné změny." , "Pozor!", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(main, "Stránka " + att.getValue("title") + " byla editována!" , "OK!", JOptionPane.INFORMATION_MESSAGE);
+                }
             } else if (result.equals("Failure")) {
                 JOptionPane.showMessageDialog(main, xml, "Nebyla provedena editace!", JOptionPane.ERROR_MESSAGE);
             } else {
